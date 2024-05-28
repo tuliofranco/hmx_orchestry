@@ -1,0 +1,5 @@
+package com.example.hmx_orchestry
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity()
