@@ -4,13 +4,14 @@ import 'package:logging/logging.dart';
 class AutenticacaoServico {
   final Logger _logger = Logger('AutenticacaoServico');
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  CadastrarUsuario(
+  // ignore: non_constant_identifier_names
+  Future<String?> CadastrarUsuario(
       {required String email,
       required String cnpj,
       required String telefone,
       required String senha,
       required String nome}) async {
-    try {
+    try  {
       UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: senha,
@@ -22,8 +23,16 @@ class AutenticacaoServico {
 
       // Chama a função fictícia para verificar o número de telefone
       await _verifyPhoneNumber(telefone, userCredential.user!);
-    } catch (e) {
-      _logger.info('Falha ao cadastrar usuário: $e');
+
+      return null;
+    } on FirebaseAuthException catch(e) {
+      if(e.code == 'email-already-in-use'){
+        return 'Email já está sendo usado.';
+        //showSnackBar(context: context, text: text);
+
+      } else {
+        return 'Erro desconhecido! Falha ao cadastrar usuário: $e';
+      }
     }
   }
   Future<void> _verifyPhoneNumber(String phoneNumber, User user) async {
@@ -47,5 +56,13 @@ class AutenticacaoServico {
         print('Tempo limite para recuperação automática do código atingido');
       },
     );
+  }
+
+  Future<String?> LogarUsuario({required String email, required String senha}) async {
+    try {
+      await _firebaseAuth.signInWithEmailAndPassword(email: email, password: senha);
+    } on FirebaseAuthException catch (e){
+      return e.message;
+    }
   }
 }

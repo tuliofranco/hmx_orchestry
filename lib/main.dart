@@ -25,7 +25,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
 void _setupLogging() {
   Logger.root.level = Level.ALL; // Configura o nível de log
   Logger.root.onRecord.listen((record) {

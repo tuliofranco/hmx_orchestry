@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hmx_orchestry/_comum/snackbar_error.dart';
 import 'package:hmx_orchestry/pages/login_page.dart';
-import 'package:hmx_orchestry/pages/servicos/autenticacao_servico.dart';
+import 'package:hmx_orchestry/servicos/autenticacao_servico.dart';
+import 'package:hmx_orchestry/widgets/components.dart';
 import 'package:logging/logging.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-
 
 class CadastroForm extends StatefulWidget {
   const CadastroForm({super.key});
@@ -16,11 +17,12 @@ class _CadastroFormState extends State<CadastroForm> {
   final Logger _logger = Logger('CadastroForm');
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
-    final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _cnpjController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   final AutenticacaoServico _autenticacaoServico = AutenticacaoServico();
 
@@ -44,17 +46,87 @@ class _CadastroFormState extends State<CadastroForm> {
           child: Column(
             children: [
               const SizedBox(height: 60.0),
-              _buildEmailField(),
+              ComumTextFormField(
+                controller: _emailController,
+                labelText: "E-mail",
+                hintText: 'Digite seu email',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, digite um email válido';
+                  }
+                  if (value.length < 5) {
+                    return 'O nome precisa ter mais de 5 letras';
+                  }
+                  return null;
+                },
+              ),
               const SizedBox(height: 15.0),
-               _buildNameField(),
+              ComumTextFormField(
+                controller: _nameController,
+                labelText: "Nome",
+                hintText: 'Digite o nome da empresa',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, digite um email válido';
+                  }
+                  if (value.length < 5) {
+                    return 'O nome precisa ter mais de 5 letras';
+                  }
+                  return null;
+                },
+              ),
               const SizedBox(height: 15.0),
-              _buildCnpjField(),
+              ComumTextFormField(
+                controller: _cnpjController,
+                labelText: "CNPJ",
+                hintText: '00.000.000/0000-00',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, digite seu CNPJ';
+                  }
+                  // Adicione aqui a validação de CNPJ se necessário
+                  return null;
+                },
+                inputFormatters: [maskFormatterCnpj],
+              ),
               const SizedBox(height: 15.0),
-              _buildPhoneNumberField(),
+              ComumTextFormField(
+                controller: _phoneNumberController,
+                labelText: "Telefone",
+                hintText: '(99) 99999-9999',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, digite seu telefone';
+                  }
+                  return null;
+                },
+                inputFormatters: [maskFormatterPhone],
+              ),
               const SizedBox(height: 15.0),
-              _buildPasswordField(),
+              ComumTextFormField(
+                controller: _passwordController,
+                labelText: "Senha",
+                hintText: "Digite sua senha",
+                isObscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor, digite uma senha';
+                  }
+                  return null;
+                },
+              ),
               const SizedBox(height: 15.0),
-              _buildConfirmPasswordField(),
+              ComumTextFormField(
+                controller: _confirmPasswordController,
+                labelText: "Senha",
+                hintText: "Digite sua senha",
+                isObscureText: true,
+                validator: (value) {
+                  if (value != _passwordController) {
+                    return 'As senhas não coincidem.';
+                  }
+                  return null;
+                },),
               const SizedBox(height: 50.0),
               _buildSubmitButton(),
               const SizedBox(height: 130.0),
@@ -72,147 +144,6 @@ class _CadastroFormState extends State<CadastroForm> {
     _logger.info("Telefone: ${_phoneNumberController.text}");
     _logger.info("Senha: ${_passwordController.text}");
     _logger.info("Confirmação de Senha: ${_confirmPasswordController.text}");
-  }
-  
-
-  Widget _buildEmailField() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: TextFormField(
-        controller: _emailController,
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: 'Email',
-          hintText: 'Digite seu email',
-        ),
-        keyboardType: TextInputType.emailAddress,
-        validator: (value) {
-          if (value == null || value.isEmpty || value.length < 5 || !value.contains("@")) {
-            return 'Por favor, digite um email válido';
-          }
-          if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-            return 'Por favor, digite um email válido';
-          }
-          return null;
-        },
-      ),
-    );
-  }
-
-
-  Widget _buildNameField() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: TextFormField(
-        controller: _nameController,
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: 'Nome',
-          hintText: 'Digite o nome da empresa',
-        ),
-        keyboardType: TextInputType.name,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Por favor, digite um email válido';
-          }
-          if (value.length < 5){
-            return 'O nome precisa ter mais de 5 letras';
-          }
-          return null;
-        },
-      ),
-    );
-  }
-
-
-  Widget _buildCnpjField() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: TextFormField(
-        controller: _cnpjController,
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: 'CNPJ',
-          hintText: '00.000.000/0000-00',
-        ),
-        keyboardType: TextInputType.number,
-        inputFormatters: [maskFormatterCnpj],
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Por favor, digite seu CNPJ';
-          }
-          // Adicione aqui a validação de CNPJ se necessário
-          return null;
-        },
-      ),
-    );
-  }
-
-  Widget _buildPhoneNumberField() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: TextFormField(
-        controller: _phoneNumberController,
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: 'Telefone',
-          hintText: '(99) 99999-9999',
-        ),
-        keyboardType: TextInputType.phone,
-        inputFormatters: [maskFormatterPhone],
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Por favor, digite seu telefone';
-          }
-          return null;
-        },
-      ),
-    );
-  }
-
-  Widget _buildPasswordField() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: TextFormField(
-        controller: _passwordController,
-        obscureText: true,
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: 'Senha',
-          hintText: 'Digite sua senha',
-        ),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Por favor, digite uma senha';
-          }
-          return null;
-        },
-      ),
-    );
-  }
-
-  Widget _buildConfirmPasswordField() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: TextFormField(
-        controller: _confirmPasswordController,
-        obscureText: true,
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: 'Confirme a Senha',
-          hintText: 'Confirme sua senha',
-        ),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Por favor, confirme sua senha';
-          }
-          if (value != _passwordController.text) {
-            return 'As senhas não coincidem';
-          }
-          return null;
-        },
-      ),
-    );
   }
 
   Widget _buildSubmitButton() {
@@ -235,7 +166,6 @@ class _CadastroFormState extends State<CadastroForm> {
         ),
       ),
     );
-
   }
 
   void _submitForm() {
@@ -248,7 +178,22 @@ class _CadastroFormState extends State<CadastroForm> {
     if (_formKey.currentState!.validate()) {
       _logFormValues();
       _logger.info("Formulário válido!");
-      _autenticacaoServico.CadastrarUsuario(email: email, cnpj: cnpj, telefone: telefone, senha: senha, nome: nome);
+      _autenticacaoServico.CadastrarUsuario(
+              email: email,
+              cnpj: cnpj,
+              telefone: telefone,
+              senha: senha,
+              nome: nome)
+          .then((String? error) {
+        if (error != null) {
+          showSnackBar(context: context, text: error);
+        } else {
+          showSnackBar(
+              context: context,
+              text: "Cadastro efetuado com sucesso!!",
+              isError: false);
+        }
+      });
       Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => const LoginPage()),
