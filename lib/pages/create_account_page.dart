@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hmx_orchestry/widgets/cadastro_form.dart';
+import 'package:hmx_orchestry/servicos/cadastro_form.dart';
 
 class CreateAccountPage extends StatefulWidget {
   const CreateAccountPage({super.key});

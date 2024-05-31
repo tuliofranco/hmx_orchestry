@@ -1,9 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:logging/logging.dart';
+import 'package:dartz/dartz.dart';
 
 class AutenticacaoServico {
   final Logger _logger = Logger('AutenticacaoServico');
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  get instance => null;
   // ignore: non_constant_identifier_names
   Future<String?> CadastrarUsuario(
       {required String email,
@@ -58,11 +61,20 @@ class AutenticacaoServico {
     );
   }
 
-  Future<String?> LogarUsuario({required String email, required String senha}) async {
+  // ignore: non_constant_identifier_names
+  Future<Either<String, void>> logarUsuario({required String email, required String senha}) async {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(email: email, password: senha);
-    } on FirebaseAuthException catch (e){
-      return e.message;
+      return right(null);
+    } on FirebaseAuthException catch (e) {
+      return left(e.message ?? 'Erro desconhecido');
     }
+  }
+
+
+
+  // ignore: non_constant_identifier_names
+  Future<void> Deslogar() async {
+    return _firebaseAuth.signOut();
   }
 }

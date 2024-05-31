@@ -122,7 +122,7 @@ class _CadastroFormState extends State<CadastroForm> {
                 hintText: "Digite sua senha",
                 isObscureText: true,
                 validator: (value) {
-                  if (value != _passwordController) {
+                  if (value != _passwordController.text) {
                     return 'As senhas não coincidem.';
                   }
                   return null;
