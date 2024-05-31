@@ -37,6 +37,9 @@ dependencies:
   cupertino_icons: ^1.0.6
   firebase_core: ^2.32.0
   firebase_auth: ^4.20.0
+  mask_text_input_formatter: ^2.9.0
+  logging: ^1.2.0
+  dartz: ^0.10.1
 
 dev_dependencies:
   flutter_test:
@@ -62,7 +65,10 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - asset/images/
+    - asset/images/logo_hemox.png
+    - asset/fonts/Sunflower-Medium.ttf
+    - asset/fonts/Sunflower-Bold.ttf
+    - asset/fonts/Sunflower-Light.ttf
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
